@@ -1,11 +1,11 @@
 import express from 'express';
+import authRoutes from './routes/authRoutes.js'
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-    res.send('Hello, Express with ES Modules!');
-});
+app.use('/api/auth', authRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
