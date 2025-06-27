@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Search, MapPin, Clock, Star, ArrowRight } from "lucide-react"
-import { PharmasphereLogoText } from "@/components/logo"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import Navbar from "@/components/navbar"
+import { Button } from "@/components/ui/button"
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -32,20 +32,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <PharmasphereLogoText />
-            <div className="flex gap-3">
-              <Button variant="outline" className="hover:bg-blue-50">
-                Login
-              </Button>
-              <Button className="btn-primary">Sign Up</Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* <Navbar /> */}
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16">
@@ -271,7 +258,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <PharmasphereLogoText />
+              <p className="font-heading text-2xl font-bold text-white">Pharmasphere</p>
               <p className="mt-4 text-gray-400">Connecting health, one prescription at a time.</p>
             </div>
             <div>

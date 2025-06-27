@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Eye, EyeOff, Save, Trash2, AlertTriangle } from "lucide-react"
 import { ClientLayout } from "@/components/client-layout"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { getUser, setUser } from "@/lib/utils"
 
 export default function PersonalInformationPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -37,9 +38,59 @@ export default function PersonalInformationPage() {
     confirmPassword: "",
   })
 
-  const handlePersonalInfoSave = () => {
-    // Handle saving personal information
-    console.log("Saving personal info:", personalInfo)
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:8080/api/auth/me", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPersonalInfo({
+            fullName: data.name,
+            email: data.email,
+            phone: "",
+            address: "",
+            dateOfBirth: "",
+            emergencyContact: "",
+          });
+        } else {
+          // fallback to localStorage
+          const user = getUser();
+          if (user) {
+            setPersonalInfo((info) => ({ ...info, fullName: user.name, email: user.email }));
+          }
+        }
+      } catch (err) {
+        // fallback to localStorage
+        const user = getUser();
+        if (user) {
+          setPersonalInfo((info) => ({ ...info, fullName: user.name, email: user.email }));
+        }
+      }
+    }
+    fetchUser();
+  }, []);
+
+  const handlePersonalInfoSave = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/me", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name: personalInfo.fullName, email: personalInfo.email })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        alert("Profile updated successfully");
+      } else {
+        alert("Failed to update profile");
+      }
+    } catch (err) {
+      alert("Network error");
+    }
   }
 
   const handlePasswordChange = () => {

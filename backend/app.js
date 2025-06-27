@@ -12,6 +12,7 @@ import logisticsRoutes from './routes/logisticsRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js'
 import socketManager from './socket/socketManager.js';
 import './jobs/expirationAlertJob.js';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);

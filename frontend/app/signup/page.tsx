@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useRouter } from "next/navigation"
+import { setUser } from "@/lib/utils"
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -18,12 +20,34 @@ export default function SignupPage() {
     password: "",
     agreeToTerms: false,
   })
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle signup logic here
-    console.log("Signup data:", formData)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name: formData.fullName, email: formData.email, password: formData.password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Signup failed");
+      } else {
+        setUser(data.user);
+        router.push("/");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center p-4">
@@ -49,6 +73,7 @@ export default function SignupPage() {
 
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <Input
@@ -114,8 +139,8 @@ export default function SignupPage() {
                 </label>
               </div>
 
-              <Button type="submit" className="w-full btn-primary text-lg py-3" disabled={!formData.agreeToTerms}>
-                Create Account
+              <Button type="submit" className="w-full btn-primary text-lg py-3" disabled={!formData.agreeToTerms || loading}>
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
 

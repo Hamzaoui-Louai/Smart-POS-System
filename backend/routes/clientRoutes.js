@@ -4,14 +4,14 @@ import { getPharmacies, searchMedicines, getMedicinePrice, getRefillSuggestions 
 
 const router = express.Router();
 
-// All routes in this file require client role
-router.use(authenticateToken, authorizeRoles('client'));
+// Allow all roles to access these routes
+router.use(authenticateToken, authorizeRoles('client', 'admin', 'pharmacy_owner', 'cashier', 'wholesaler', 'logistics'));
 
 // View pharmacies and their locations
-router.get('/pharmacies', getPharmacies);
+router.post('/pharmacies', getPharmacies);
 
 // Search for medicines across pharmacies
-router.get('/medicines/search', searchMedicines);
+router.post('/medicines/search', searchMedicines);
 
 // View medicine prices
 router.get('/medicines/:id/price', getMedicinePrice);

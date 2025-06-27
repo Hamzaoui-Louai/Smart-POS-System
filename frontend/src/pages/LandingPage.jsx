@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge"
+import { useRouter } from "next/navigation"
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchExpanded, setIsSearchExpanded] = useState(true)
   const [scrollY, setScrollY] = useState(0)
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -39,10 +41,10 @@ export default function LandingPage() {
           <div className="flex items-center justify-between">
             <PharmasphereLogoText />
             <div className="flex gap-3">
-              <Button variant="outline" className="hover:bg-blue-50 bg-transparent">
+              <Button variant="outline" className="hover:bg-blue-50 bg-transparent" onClick={() => router.push('/login')}>
                 Login
               </Button>
-              <Button className="btn-primary">Sign Up</Button>
+              <Button className="btn-primary" onClick={() => router.push('/signup')}>Sign Up</Button>
             </div>
           </div>
         </div>
@@ -157,12 +159,12 @@ export default function LandingPage() {
                 viewport={{ once: true }}
               >
                 <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-                  <CardHeader>
+                  {/* <CardHeader>
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-600 to-teal-500 flex items-center justify-center">
                       <feature.icon className="w-8 h-8 text-white" />
                     </div>
-                    <CardTitle className="font-heading text-xl">{feature.title}</CardTitle>
-                  </CardHeader>
+                    <CardTitle className="font-heading text-xl">{feature.title}</CardTitle> */}
+                  {/* </CardHeader> */}
                   <CardContent>
                     <p className="text-gray-600">{feature.description}</p>
                   </CardContent>

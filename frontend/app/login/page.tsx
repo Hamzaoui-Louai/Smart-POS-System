@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useRouter } from "next/navigation"
+import { setUser } from "@/lib/utils"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -17,12 +19,38 @@ export default function LoginPage() {
     password: "",
     rememberMe: false,
   })
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log("Login data:", formData)
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: formData.email, password: formData.password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Login failed");
+      } else {
+        setUser(data.user);
+        if (data.user.role === 'pharmacy_owner') {
+          router.push('/pharmacy-owner/personal');
+        } else {
+          router.push("/map-search");
+        }
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center p-4">
@@ -48,6 +76,7 @@ export default function LoginPage() {
 
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <Input
@@ -92,13 +121,10 @@ export default function LoginPage() {
                     Remember me
                   </label>
                 </div>
-                <a href="#" className="text-sm text-blue-600 hover:underline">
-                  Forgot password?
-                </a>
               </div>
 
-              <Button type="submit" className="w-full btn-primary text-lg py-3">
-                Sign In
+              <Button type="submit" className="w-full btn-primary text-lg py-3" disabled={loading}>
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
@@ -111,14 +137,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-3">Or continue as</p>
-                <Button variant="outline" className="w-full">
-                  Continue as Guest
-                </Button>
-              </div>
-            </div>
+            
           </CardContent>
         </Card>
 

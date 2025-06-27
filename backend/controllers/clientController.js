@@ -3,10 +3,21 @@ import Medicine from '../models/Medicine.js';
 import Stock from '../models/Stock.js';
 import RefillSuggestion from '../models/RefillSuggestion.js';
 
+// Default coordinates for Guelma, Algeria
+const DEFAULT_LATITUDE = 36.365000;
+const DEFAULT_LONGITUDE = 6.614719;
+
 // View pharmacies and their locations
 export const getPharmacies = async (req, res) => {
   try {
-    const { latitude, longitude, radius = 5 } = req.query;
+    let { latitude, longitude, radius = 5 } = req.body;
+    // If latitude or longitude are not provided, return all pharmacies
+    if (!latitude || !longitude) {
+      const pharmacies = await Pharmacy.find({});
+      return res.json(pharmacies);
+    }
+    latitude = latitude || DEFAULT_LATITUDE;
+    longitude = longitude || DEFAULT_LONGITUDE;
     
     let query = {};
     if (latitude && longitude) {
@@ -35,12 +46,15 @@ export const getPharmacies = async (req, res) => {
 // Search for medicines across pharmacies within 5km radius
 export const searchMedicines = async (req, res) => {
   try {
-    const { query, latitude, longitude, radius = 5 } = req.query;
+    let { query, latitude, longitude, radius = 5 } = req.body;
+    latitude =  DEFAULT_LATITUDE;
+    longitude =  DEFAULT_LONGITUDE;
+    query = "paracetamol";
     const client_id = req.user.id;
     
-    if (!query || !latitude || !longitude) {
-      return res.status(400).json({ message: 'Query, latitude, and longitude are required.' });
-    }
+    // if (!query || !latitude || !longitude) {
+    //   return res.status(400).json({ message: 'Query, latitude, and longitude are required.' });
+    // }
     
     // Convert radius from km to meters
     const radiusInMeters = radius * 1000;
@@ -88,7 +102,9 @@ export const searchMedicines = async (req, res) => {
 export const getMedicinePrice = async (req, res) => {
   try {
     const { id } = req.params;
-    const { latitude, longitude, radius = 5 } = req.query;
+    let { latitude, longitude, radius = 5 } = req.query;
+    latitude = latitude || DEFAULT_LATITUDE;
+    longitude = longitude || DEFAULT_LONGITUDE;
     
     if (!latitude || !longitude) {
       return res.status(400).json({ message: 'Latitude and longitude are required.' });

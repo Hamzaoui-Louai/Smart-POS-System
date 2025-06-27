@@ -4,6 +4,8 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
+import { getUser } from "@/lib/utils"
+import Link from "next/link"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -734,6 +736,30 @@ const SidebarMenuSubButton = React.forwardRef<
   )
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
+
+// Role-based sidebar content
+export function SidebarRoleBased() {
+  const user = typeof window !== 'undefined' ? getUser() : null;
+  if (!user || !user.role) return null;
+  if (user.role === 'client') {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <Link href="/client/personal">
+            <SidebarMenuButton isActive={false}>Personal</SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <Link href="/client/analytics">
+            <SidebarMenuButton isActive={false}>Analytics</SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
+  // Add more roles here as needed
+  return null;
+}
 
 export {
   Sidebar,

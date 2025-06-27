@@ -11,7 +11,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-sm">
+      {/* <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <PharmasphereLogoText />
@@ -23,7 +23,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16">
